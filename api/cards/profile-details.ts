@@ -19,13 +19,18 @@ export default async (req: VercelRequest, res: VercelResponse) => {
             try {
                 const cardSVG = await getProfileDetailsSVGWithThemeName(username, theme);
                 res.setHeader('Content-Type', 'image/svg+xml');
+                res.setHeader('Cache-Control', 'public, max-age=14400, s-maxage=86400');
                 res.send(cardSVG);
                 return;
             } catch (err: any) {
                 console.log(err.message);
                 // We update github token and try again, until getNextGitHubToken throw an Error
-                changToNextGitHubToken(tokenIndex);
-                tokenIndex += 1;
+                if (err.response && (err.response.status === 403 || err.response.status === 401)) {
+                    changToNextGitHubToken(tokenIndex);
+                    tokenIndex += 1;
+                } else {
+                    throw err;
+                }
             }
         }
     } catch (err: any) {
