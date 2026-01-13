@@ -3,8 +3,8 @@ name: Build and Deploy
 on:
   push:
     branches:
-      - main  # Substitua pelo nome do branch principal, se diferente
-  workflow_dispatch:
+      - main
+  workflow_dispatch: # Permite execução manual
 
 jobs:
   build:
